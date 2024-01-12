@@ -105,11 +105,11 @@ const Login = (props) => {
                 console.log(res.data);
                 console.log(res.status);
 
-                if (res.data.verify === 'true') {
-                    console.log('isValid: ', res.data.verify);
+                if (JSON.parse(res.data.verify) === true) {
+                    console.log('JSON.parse(isValid): ', JSON.parse(res.data.verify));
                     resolve();
                 } else {
-                    console.log('isValid: ', res.data.verify);
+                    console.log('JSON.parse(isValid): ', JSON.parse(res.data.verify));
                     reject();
                 }
             });
