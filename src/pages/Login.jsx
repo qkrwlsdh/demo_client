@@ -3,14 +3,26 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactModal from "react-modal";
 
-const Login = (props) => {
+const Login = () => {
+    /**
+     * @useState
+     * state란 컴포넌트가 가질 수 있는 상태를 말합니다.
+     * 변수 선언 예시로는 const [state, setState] = useState(초기값);
+     * state의 값을 변경할 때는 setState(변경할 값); 처럼 setState 함수를 불러 변경할 값을 인자로 넣어주면 됩니다.
+     * setState 함수를 이용해서 값을 변경하면 해당 컴포넌트는 렌더링이 되어 화면이 업데이트 됩니다.
+     */
     const [loginId, setLoginId] = useState("");
     const [loginPw, setLoginPw] = useState("");
     const [value, setValue] = useState("");
     const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [qrModalIsOpen, setQrModalIsOpen] = useState(false);
+    // const [qrModalIsOpen, setQrModalIsOpen] = useState(false);
     const [responseData, setResponseData] = useState({});
-    const [qrUrl, setQrUrl] = useState(null);
+    // const [qrUrl, setQrUrl] = useState(null);
+    /**
+     * @useNavigate
+     * Link의 용도와 마찬가지로 페이지 이동을 하게 하는 함수입니다.
+     * 하지만 Link는 클릭시 페이지를 바로 이동하게 하는 기능을 하고 useNavigate는 조건을 만족했을때 페이지 전환을 하도록 합니다.
+     */
     let navigate = useNavigate();
 
     const resetInput = () => {
@@ -34,9 +46,11 @@ const Login = (props) => {
             alert("비밀번호에 아이디를 포함할 수 없습니다.");
             return false;
         }
+        // 비밀번호 분기별 1회 이상 변경 기능은 비밀번호 변경 히스토리 생성 후 작업
         return true;
     }
 
+    // 로그인 버튼 이벤트
     const loginBtnClick = async (e) => {
         const requestData = { loginId, loginPw };
 
@@ -56,11 +70,11 @@ const Login = (props) => {
                     setModalIsOpen(true);
 
                 // 구글 OTP 미등록
-                } else if (response.status === 201) {
-                    setQrUrl(response.data.QRUrl);
+                // } else if (response.status === 201) {
+                //     setQrUrl(response.data.QRUrl);
 
-                    // QR 등록 모달 오픈
-                    setQrModalIsOpen(true);
+                //     // QR 등록 모달 오픈
+                //     setQrModalIsOpen(true);
 
                 } else if (response.status === 204) {
                     alert('로그인 5회 이상 실패 시 로그인이 불가합니다.');
@@ -79,7 +93,7 @@ const Login = (props) => {
             loginBtnClick();
         }
     };
-    // input 이벤트
+    // otp code input 이벤트
     const handleInput = (e) => {
         e.preventDefault();
         setValue(e.target.value);
@@ -87,19 +101,24 @@ const Login = (props) => {
     // otp code submit 이벤트
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await afterAuth().then(() => {
+        await checkingAuth().then(() => {
             navigate("/mypage", { state: { loginId: responseData.loginId }});
         }).catch(() => {
             alert('인증 코드가 맞지 않습니다.');
         });
     };
-
-    function afterAuth() {
+    /**
+     *
+     * @Promise
+     * Promise 객체는 비동기 로직을 마치 동기처럼 사용할 수 있는 기능을 가집니다.
+     * 실행 함수는 프로미스를 이행(resolve)하거나, 거부(reject)할 수 있음.
+     * 프로미스를 이행했을 때 할 일은 then() 호출로 정의하고, 거부됐을 때 할 일은 catch() 호출로 정의함.
+     */
+    function checkingAuth() {
         return new Promise((resolve, reject) => {
             const data = {
                 "token": value,
                 "loginId": responseData.loginId,
-                "googleOtp": responseData.googleOtp
             }
             axios.post('/api/auth', data).then(res => {
                 console.log(res.data);
@@ -171,7 +190,7 @@ const Login = (props) => {
                     </div>
                 </form>
             </ReactModal>
-            <ReactModal className="relative" isOpen={qrModalIsOpen} ariaHideApp={false}>
+            {/* <ReactModal className="relative" isOpen={qrModalIsOpen} ariaHideApp={false}>
                 <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
                     <div className="relative w-2/4 my-6 mx-auto max-w-3xl">
                             <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
@@ -189,7 +208,7 @@ const Login = (props) => {
                             </div>
                         </div>
                 </div>
-            </ReactModal>
+            </ReactModal> */}
         </section>
 
     );

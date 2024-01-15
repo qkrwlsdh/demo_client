@@ -1,11 +1,11 @@
-import { React, useEffect, useState } from "react";
+import { React } from "react";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
-import { Link } from 'react-router-dom';
-import BoardList from "../components/BoardList/BoardList";
+// import axios from "axios";
+// import { Link } from 'react-router-dom';
+// import BoardList from "../components/BoardList/BoardList";
 
 const Mypage = (props) => {
-    const [data, setData] = useState("")
+    // const [data, setData] = useState("")
     const state = useLocation();
     const userId = state.state.loginId;
 

@@ -48,7 +48,7 @@ const UpdateBoard = () => {
             setContent(old_content);
             console.log('title: ', title);
             console.log('content: ', content);
-        }, [])
+        }, [content, old_content, title, old_title])
     return (
         <>
             <label>제목</label> <br/>

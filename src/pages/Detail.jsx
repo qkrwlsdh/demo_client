@@ -41,7 +41,7 @@ const Detail = () => {
             setContent(response.data.data.content);
         }
         getDetailBoard();
-    }, [])
+    }, [id])
     return (
         <>
             <h1> {title} </h1>
