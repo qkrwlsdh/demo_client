@@ -80,6 +80,7 @@ const Login = () => {
     }
     // Enter 입력이 되면 클릭 이벤트 실행
     const handleOnKeyPressLogin = (e) => {
+        console.log(e.key)
         if (e.key === 'Enter') {
             loginBtnClick();
         }
