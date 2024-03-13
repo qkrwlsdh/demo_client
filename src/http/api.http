@@ -1,0 +1,48 @@
+
+# 09B746CDC220343C4E8DE370A4EA9E45ECAC77F84DFF6495EF44A84B4F902285
+# {bcrypt}$2a$10$35IV4cmmuSkXIgETpcboiuETVEh32r4aMYDut89nJ89uVgoo3y5G6
+### JWT 로그인 테스트
+POST http://localhost:8080/login
+Content-Type: application/x-www-form-urlencoded
+
+username=admin
+&password=1234
+
+
+### JWT 토큰 검증 테스트
+GET http://localhost:8080/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpYXQiOjE3MDg0OTQ1NzEsImV4cCI6MTcwODQ5NDYwN30.CsVFuV4KA3T5ewnokWCjeM3C8HqboiJCCzuDEeE6oZ0
+
+
+### KakaoPay ready
+POST https://open-api.kakaopay.com/online/v1/payment/ready HTTP/1.1
+Authorization: SECRET_KEY DEVD194324797E1AA50D3114E5143C2AA1609D4C
+Content-Type: application/json
+
+{
+    "cid": "TC0ONETIME",
+    "partner_order_id": "partner_order_id",
+    "partner_user_id": "partner_user_id",
+    "item_name": "초코파이",
+    "quantity": "1",
+    "total_amount": "2200",
+    "vat_amount": "200",
+    "tax_free_amount": "0",
+    "approval_url": "http://localhost:3000",
+    "fail_url": "http://localhost:3000/payment-fail",
+    "cancel_url": "http://localhost:3000/payment-cancel"
+}
+
+
+### KakaoPay Approve
+POST https://open-api.kakaopay.com/online/v1/payment/approve HTTP/1.1
+Authorization: SECRET_KEY DEVD194324797E1AA50D3114E5143C2AA1609D4C
+Content-Type: application/json
+
+{
+    "cid": "TC0ONETIME",
+    "tid": "T5e04a50196d5d20e823",
+    "partner_order_id": "partner_order_id",
+    "partner_user_id": "partner_user_id",
+    "pg_token": "62386891e2c31bfe275d"
+}

@@ -1,15 +1,16 @@
 {
-    "apps": [
-      {
-        "name": "demo-client",
-        "script": "./src/pages/Main.jsx",
-        "instances": 0,
-        "exec_mode": "cluster",
-        "autorestart": true,
-        "max_memory_restart": "2G",
+  "apps": [
+    {
+      "name": "demo-client",
+      "script": "./src/pages/Main.jsx",
+      "instances": 0,
+      "exec_interpreter": "none",
+      "exec_mode": "fork",
+      "autorestart": true,
+      "max_memory_restart": "2G",
 
-        "output": "~/logs/pm2/console.log",
-        "error": "~/logs/pm2/onsoleError.log"
-      }
-    ]
-  }
+      "output": "~/logs/pm2/console.log",
+      "error": "~/logs/pm2/onsoleError.log"
+    }
+  ]
+}
