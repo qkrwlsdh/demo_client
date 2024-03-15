@@ -3,25 +3,29 @@ import axios from "axios";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import BoardList from "../components/BoardList/BoardList";
 import { BoardAtom, PagingAtom, ModalAtom, ModalDetailAtom, ModalUpdateAtom } from "../recoil/BoardAtom";
-import { Link } from "react-router-dom";
-import { loginIdAtom } from "../recoil/MemberAtom";
+import { Link, useNavigate } from "react-router-dom";
+import { loginIdAtom, modalIsOpenAtom } from "../recoil/MemberAtom";
 import ReactModal from "react-modal";
 import CreateBoard from "./CreateBoard";
 import Detail from "./Detail";
 import UpdateBoard from "./UpdateBoard";
 import { authorizationAtom, cidAtom, tidAtom } from "../recoil/KakaopayAtom";
 import Pagination from "../components/Pagination";
+import { useCookies } from "react-cookie";
 
 const Main = () => {
     const [data, setData] = useRecoilState(BoardAtom);
     const userId = useRecoilValue(loginIdAtom);
     const [page, setPage] = useRecoilState(PagingAtom);
     const [modalIsOpen, setModalIsOpen] = useRecoilState(ModalAtom);
+    const [otpmodalIsOpen, setOtpmodalIsOpen] = useRecoilState(modalIsOpenAtom);
     const modalDetailIsOpen = useRecoilValue(ModalDetailAtom);
     const modalUpdateIsOpen = useRecoilValue(ModalUpdateAtom);
     const cid = useRecoilValue(cidAtom);
     const setTid = useSetRecoilState(tidAtom);
     const authSecretKey = useRecoilValue(authorizationAtom);
+    const [cookies, setCookie, removeCookie] = useCookies(['refresh']);
+    let navigate = useNavigate();
 
     const getBoardList = async (pageNumber) => {
       // let response = await axios.get(
@@ -42,8 +46,15 @@ const Main = () => {
 
     useEffect(() => {
       getBoardList(page.number);
-
     }, [modalIsOpen, modalDetailIsOpen, modalUpdateIsOpen]); // 변수가 수정될때마다 렌더링
+
+    const logOut = () => {
+      setOtpmodalIsOpen(false);
+      removeCookie('refresh'); // 쿠키를 삭제
+      removeCookie('verify');
+      navigate('/'); // 메인 페이지로 이동
+    };
+
 
     const kakaopay = async () => {
       let kakaoData = {
@@ -94,7 +105,10 @@ const Main = () => {
                 </Link>
               </div>
 
-              <div className="m-5 text-blue-900">{ userId } 님 환영합니다</div>
+              {/* <div className="m-5 text-blue-900">{ userId } 님 환영합니다</div> */}
+              <Link>
+                <input className="m-5 bg-blue-900 hover:bg-blue-600 text-white font-bold py-2 px-4 border-blue-900 rounded cursor-pointer" type='button' value='로그아웃' onClick={logOut}/>
+              </Link>
             </div>
             <div className="w-full flex items-center justify-between py-5">
               <div>

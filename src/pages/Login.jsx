@@ -1,10 +1,11 @@
-import { React } from "react";
+import { React, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactModal from "react-modal";
 import { useRecoilState } from 'recoil';
 import querystring from "querystring";
 import { loginIdAtom, loginPwAtom, modalIsOpenAtom, responseDataAtom, tokenAtom } from "../recoil/MemberAtom";
+import { useCookies } from 'react-cookie';
 
 const Login = () => {
 
@@ -13,7 +14,10 @@ const Login = () => {
     const [token, setToken] = useRecoilState(tokenAtom);
     const [modalIsOpen, setModalIsOpen] = useRecoilState(modalIsOpenAtom);
     const [responseData, setResponseData] = useRecoilState(responseDataAtom);
+    const [cookies, setCookie, removeCookie] = useCookies(['verify']);
     let navigate = useNavigate();
+
+    // useEffect(() => {})
 
     const resetInput = () => {
         // setLoginId("");
@@ -59,13 +63,12 @@ const Login = () => {
                         }
                     },
                     {withCredentials: true}
-                );
+                )
 
                 // 구글 OTP 등록
                 if (response.status === 200) {
                     setResponseData({loginId: username, googleOtp: response.data.googleOtp});
                     setModalIsOpen(true);
-                    console.log(responseData);
 
                 } else if (response.status === 204) {
                     alert('로그인 5회 이상 실패 시 로그인이 불가합니다.');
@@ -80,7 +83,6 @@ const Login = () => {
     }
     // Enter 입력이 되면 클릭 이벤트 실행
     const handleOnKeyPressLogin = (e) => {
-        console.log(e.key)
         if (e.key === 'Enter') {
             loginBtnClick();
         }
@@ -101,11 +103,11 @@ const Login = () => {
     // otp code submit 이벤트
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await checkAuth().then(() => {
-            navigate("/", { state: { loginId: responseData.loginId }});
-        }).catch(() => {
-            alert('인증 코드가 맞지 않습니다.');
-        });
+        try {
+            await checkAuth();
+        } catch (err) {
+            console.log('Login/handleSubmit/err: ', err);
+        }
     };
     /**
      * @Promise
@@ -125,11 +127,13 @@ const Login = () => {
                     , {withCredentials: true}
                 ).then(res => {
 
-                if (JSON.parse(res.data.verify) === true) {
-                    console.log('JSON.parse(isValid): ', JSON.parse(res.data.verify));
+                if (res.status === 200) {
+                    console.log("wow");
+                    navigate("/");
                     resolve();
                 } else {
-                    console.log('JSON.parse(isValid): ', JSON.parse(res.data.verify));
+                    console.log("fail..");
+                    alert('인증 코드가 맞지 않습니다.');
                     reject();
                 }
             });
