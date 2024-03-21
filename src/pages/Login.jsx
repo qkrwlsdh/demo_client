@@ -1,11 +1,11 @@
-import { React, useEffect } from "react";
+import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactModal from "react-modal";
 import { useRecoilState } from 'recoil';
-import querystring from "querystring";
 import { loginIdAtom, loginPwAtom, modalIsOpenAtom, responseDataAtom, tokenAtom } from "../recoil/MemberAtom";
-import { useCookies } from 'react-cookie';
+import toast from "react-hot-toast";
+import TailwindToaster from "../components/Toaster";
 
 const Login = () => {
 
@@ -14,30 +14,26 @@ const Login = () => {
     const [token, setToken] = useRecoilState(tokenAtom);
     const [modalIsOpen, setModalIsOpen] = useRecoilState(modalIsOpenAtom);
     const [responseData, setResponseData] = useRecoilState(responseDataAtom);
-    const [cookies, setCookie, removeCookie] = useCookies(['verify']);
     let navigate = useNavigate();
 
-    // useEffect(() => {})
-
     const resetInput = () => {
-        // setLoginId("");
         setPassword("");
     }
 
     const validations = () => {
         if (username.length < 6 || username.length > 20) {
-            alert("아이디는 6자 이상 20자 이하로 입력해주세요.");
+            toast.error("아이디는 6자 이상 20자 이하로 입력해주세요.");
             return false;
         }
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&^])[A-Za-z\d@$!%*?&^]{8,}$/;
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
         // 비밀번호 vaildateion
         if (!passwordRegex.test(password)) {
-            alert("비밀번호는 숫자, 영문자, 특수문자를 혼합하여 8자 이상으로 설정해주세요.");
+            toast.error("비밀번호는 숫자, 영문자, 특수문자를 혼합하여 8자 이상으로 입력해주세요.");
             return false;
         }
         // 비밀번호에 아이디가 포함되었는지 체크
         if (password.includes(username)) {
-            alert("비밀번호에 아이디를 포함할 수 없습니다.");
+            toast.error("비밀번호에 아이디를 포함할 수 없습니다.");
             return false;
         }
         // 비밀번호 분기별 1회 이상 변경 기능은 비밀번호 변경 히스토리 생성 후 작업
@@ -46,8 +42,7 @@ const Login = () => {
 
     // 로그인 버튼 이벤트
     const loginBtnClick = async () => {
-        const requestData = { username, password }; // 데이터 직렬화
-        // const requestData = querystring.stringify({ username, password }); // 데이터 직렬화
+        const requestData = { username, password };
 
         if (!validations()) {
             return;
@@ -58,7 +53,6 @@ const Login = () => {
                     , requestData
                     , {
                         headers: {
-                        // 'Content-Type': 'application/json' // 헤더에 Content-Type 지정
                         'Content-Type': 'application/x-www-form-urlencoded' // 헤더에 Content-Type 지정
                         }
                     },
@@ -69,12 +63,13 @@ const Login = () => {
                 if (response.status === 200) {
                     setResponseData({loginId: username, googleOtp: response.data.googleOtp});
                     setModalIsOpen(true);
-
-                } else if (response.status === 204) {
-                    alert('로그인 5회 이상 실패 시 로그인이 불가합니다.');
                 }
             } catch (err) {
-                alert('로그인 실패');
+                if (err.response.status === 423) {
+                    toast.error("로그인 5회 이상 실패 시 로그인이 불가합니다.");
+                } else if (err.response.status === 401) {
+                    toast.error("로그인 실패");
+                }
                 console.log('Login/loginBtnClick/err: ', err);
             } finally {
                 resetInput();
@@ -128,12 +123,18 @@ const Login = () => {
                 ).then(res => {
 
                 if (res.status === 200) {
-                    console.log("wow");
-                    navigate("/");
+                    console.log(res)
+
+                    if (res.data === 'Y') {
+                        console.log('res.data = Y');
+                        navigate("/formlayout_reissue", {state: {username: responseData.loginId}});
+                    } else if (res.data === 'N') {
+                        console.log('res.data = N');
+                        navigate("/");
+                    }
                     resolve();
                 } else {
-                    console.log("fail..");
-                    alert('인증 코드가 맞지 않습니다.');
+                    toast.error("인증 코드가 맞지 않습니다.");
                     reject();
                 }
             });
@@ -155,7 +156,7 @@ const Login = () => {
                             </div>
                             <div>
                                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                                <input type="password" name="password" id="password" value={password} placeholder="••••••••" onChange={(e) => setPassword(e.target.value)} onKeyDown={handleOnKeyPressLogin} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="" />
+                                <input type="password" name="password" id="password" value={password} placeholder="영문, 숫자, 특수문자 포함 8자 ~ 20자" onChange={(e) => setPassword(e.target.value)} onKeyDown={handleOnKeyPressLogin} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="" />
                             </div>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-start">
@@ -165,6 +166,12 @@ const Login = () => {
                                     {/* <div className="ml-3 text-sm">
                                         <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">Remember me</label>
                                     </div> */}
+                                    <div className="ml-3 text-sm">
+                                        <a href="/formlayout_id" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">아이디 찾기</a>
+                                    </div>
+                                    <div className="ml-3 text-sm">
+                                        <a href="/formlayout_pw" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">비밀번호 찾기</a>
+                                    </div>
                                 </div>
                             </div>
                             <input type="button" onClick={loginBtnClick} value='Sign in' className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" />
@@ -192,6 +199,7 @@ const Login = () => {
                     </div>
                 </form>
             </ReactModal>
+        <TailwindToaster />
         </section>
 
     );

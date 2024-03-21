@@ -9,6 +9,9 @@ import { CheckoutPage } from './pages/toss/Checkout';
 import { SuccessPage } from './pages/toss/Success';
 import { FailPage } from './pages/toss/Fail';
 import { useCookies } from 'react-cookie';
+import FormLayout_ID from './pages/FormLayout_ID';
+import FormLayout_PW from './pages/FormLayout_PW';
+import FormLayout_Reissue from './pages/FormLayout_Reissue';
 
 /**
  * @BrowserRouter는 페이지를 새로고침하지 않고도 주소를 변경할 수 있도록 한다.
@@ -29,6 +32,9 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/success" element={<SuccessPage />} />
           <Route path="/fail" element={<FailPage />} />
+          <Route path="/formlayout_id" element={<FormLayout_ID />} />
+          <Route path="/formlayout_pw" element={<FormLayout_PW />} />
+          <Route path="/formlayout_reissue" element={<FormLayout_Reissue />} />
         </Routes>
       </BrowserRouter>
     </>

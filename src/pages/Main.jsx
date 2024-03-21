@@ -15,7 +15,7 @@ import { useCookies } from "react-cookie";
 
 const Main = () => {
     const [data, setData] = useRecoilState(BoardAtom);
-    const userId = useRecoilValue(loginIdAtom);
+    const [userId, setUserId] = useRecoilState(loginIdAtom);
     const [page, setPage] = useRecoilState(PagingAtom);
     const [modalIsOpen, setModalIsOpen] = useRecoilState(ModalAtom);
     const [otpmodalIsOpen, setOtpmodalIsOpen] = useRecoilState(modalIsOpenAtom);
@@ -28,12 +28,9 @@ const Main = () => {
     let navigate = useNavigate();
 
     const getBoardList = async (pageNumber) => {
-      // let response = await axios.get(
-      //   `/api/paging?page=${pageNumber === 0 ? 1 : pageNumber}`
-      //   , {withCredentials: true}
-      // );
       let response = await axios.get(
-        "/"
+        // `/api/paging?page=${pageNumber === 0 ? 1 : pageNumber}`
+        '/'
         , {withCredentials: true}
       );
       // setData(response.data.data.boardPages.content);
@@ -45,14 +42,37 @@ const Main = () => {
     };
 
     useEffect(() => {
+      const base64Payload = cookies.refresh.split('.')[1];
+      const base64 = base64Payload.replace(/-/g, '+').replace(/_/g, '/');
+      const decodedJWT = JSON.parse(decodeURIComponent(
+        window
+        .atob(base64)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join('')
+      ));
+      console.log(decodedJWT);
+
+      setUserId(decodedJWT.username);
+
       getBoardList(page.number);
     }, [modalIsOpen, modalDetailIsOpen, modalUpdateIsOpen]); // 변수가 수정될때마다 렌더링
 
-    const logOut = () => {
+    const logOut = async () => {
       setOtpmodalIsOpen(false);
-      removeCookie('refresh'); // 쿠키를 삭제
-      removeCookie('verify');
-      navigate('/'); // 메인 페이지로 이동
+      await axios.post(
+        "/logout",
+        {withCredentials: true}
+        ).then((res) => {
+          navigate('/');
+        }).catch((err) => {
+          console.log(err);
+        });
+      // removeCookie('refresh'); // 쿠키를 삭제
+      // removeCookie('verify');
+      // navigate('/'); // 메인 페이지로 이동
     };
 
 
@@ -122,7 +142,9 @@ const Main = () => {
                 </Link>
               </div>
               <div>
-                <input className="m-5 bg-blue-900 hover:bg-blue-600 text-white font-bold py-2 px-4 border-blue-900 rounded cursor-pointer" type="button" value='네이버 결제' />
+                <Link to={"/formlayout_reissue"} state={{username: userId}}>
+                  <input className="m-5 bg-blue-900 hover:bg-blue-600 text-white font-bold py-2 px-4 border-blue-900 rounded cursor-pointer" type="button" value='비밀번호 재설정' />
+                </Link>
               </div>
             </div>
 

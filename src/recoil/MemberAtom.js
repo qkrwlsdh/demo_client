@@ -5,6 +5,7 @@ const { persistAtom } = recoilPersist();
 export const loginIdAtom = atom({
     key: "loginIdAtom",
     default: "",
+    effects_UNSTABLE: [persistAtom],    // 새로고침 되어도 유지
 });
 export const loginPwAtom = atom({
     key: "loginPwAtom",

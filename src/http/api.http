@@ -46,3 +46,26 @@ Content-Type: application/json
     "partner_user_id": "partner_user_id",
     "pg_token": "62386891e2c31bfe275d"
 }
+
+
+
+###
+POST http://localhost:8080/api/findUsername
+Content-Type: application/json
+
+{
+    "ccNo": "1112233333",
+    "repBirthDt": "19930827"
+}
+
+
+
+###
+POST http://localhost:8080/api/findUserPassword
+Content-Type: application/json
+
+{
+    "ccNo": "1112233333",
+    "repBirthDt": "19930827",
+    "username": "bankedin"
+}
