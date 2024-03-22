@@ -19,7 +19,7 @@ export const modalIsOpenAtom = atom({
     key: "modalIsOpen",
     default: false
 });
-export const responseDataAtom = atom({
-    key: "responseData",
+export const loginResDataAtom = atom({
+    key: "loginResData",
     default: {}
 });

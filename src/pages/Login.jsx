@@ -1,9 +1,9 @@
-import { React, useEffect, useState } from "react";
+import { React } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactModal from "react-modal";
 import { useRecoilState } from 'recoil';
-import { loginIdAtom, loginPwAtom, modalIsOpenAtom, responseDataAtom, tokenAtom } from "../recoil/MemberAtom";
+import { loginIdAtom, loginPwAtom, modalIsOpenAtom, loginResDataAtom, tokenAtom } from "../recoil/MemberAtom";
 import toast from "react-hot-toast";
 import TailwindToaster from "../components/Toaster";
 
@@ -13,7 +13,7 @@ const Login = () => {
     const [password, setPassword] = useRecoilState(loginPwAtom);
     const [token, setToken] = useRecoilState(tokenAtom);
     const [modalIsOpen, setModalIsOpen] = useRecoilState(modalIsOpenAtom);
-    const [responseData, setResponseData] = useRecoilState(responseDataAtom);
+    const [loginResData, setLoginResData] = useRecoilState(loginResDataAtom);
     let navigate = useNavigate();
 
     const resetInput = () => {
@@ -61,7 +61,7 @@ const Login = () => {
 
                 // 구글 OTP 등록
                 if (response.status === 200) {
-                    setResponseData({loginId: username, googleOtp: response.data.googleOtp});
+                    setLoginResData({loginId: username, googleOtp: response.data.googleOtp});
                     setModalIsOpen(true);
                 }
             } catch (err) {
@@ -114,7 +114,7 @@ const Login = () => {
         return new Promise((resolve, reject) => {
             const data = {
                 "token": token,
-                "loginId": responseData.loginId,
+                "loginId": loginResData.loginId,
             }
             axios.post(
                     '/api/auth'
@@ -127,7 +127,7 @@ const Login = () => {
 
                     if (res.data === 'Y') {
                         console.log('res.data = Y');
-                        navigate("/formlayout_reissue", {state: {username: responseData.loginId}});
+                        navigate("/formlayout_reissue", {state: {username: loginResData.loginId}});
                     } else if (res.data === 'N') {
                         console.log('res.data = N');
                         navigate("/");

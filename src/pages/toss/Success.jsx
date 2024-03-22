@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 //http://localhost:3000/success?
 //paymentType=NORMAL&orderId=Vv-u-wdtfqBTUvtmBTSa6&paymentKey=WjDM1PvGzZ0RnYX2w532yDGdDx11k8NeyqApQEJmKBaOo47l&amount=50000
@@ -52,6 +52,9 @@ export function SuccessPage() {
           searchParams.get("amount")
         ).toLocaleString()}원`}</p>
         <p>{`paymentKey: ${searchParams.get("paymentKey")}`}</p>
+        <Link to={"/"}>
+          <input className="m-5 bg-blue-900 hover:bg-blue-600 text-white font-bold py-2 px-4 border-blue-900 rounded cursor-pointer" type='button' value='돌아가기'/>
+        </Link>
       </div>
     </div>
   );

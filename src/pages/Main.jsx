@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect } from "react";
 import axios from "axios";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import BoardList from "../components/BoardList/BoardList";
@@ -14,11 +14,11 @@ import Pagination from "../components/Pagination";
 import { useCookies } from "react-cookie";
 
 const Main = () => {
-    const [data, setData] = useRecoilState(BoardAtom);
+    const boardData = useRecoilValue(BoardAtom);
     const [userId, setUserId] = useRecoilState(loginIdAtom);
-    const [page, setPage] = useRecoilState(PagingAtom);
+    const page = useRecoilValue(PagingAtom);
     const [modalIsOpen, setModalIsOpen] = useRecoilState(ModalAtom);
-    const [otpmodalIsOpen, setOtpmodalIsOpen] = useRecoilState(modalIsOpenAtom);
+    const setOtpmodalIsOpen = useSetRecoilState(modalIsOpenAtom);
     const modalDetailIsOpen = useRecoilValue(ModalDetailAtom);
     const modalUpdateIsOpen = useRecoilValue(ModalUpdateAtom);
     const cid = useRecoilValue(cidAtom);
@@ -28,7 +28,7 @@ const Main = () => {
     let navigate = useNavigate();
 
     const getBoardList = async (pageNumber) => {
-      let response = await axios.get(
+      await axios.get(
         // `/api/paging?page=${pageNumber === 0 ? 1 : pageNumber}`
         '/'
         , {withCredentials: true}
@@ -95,6 +95,7 @@ const Main = () => {
       let response = await axios.post(
         "http://localhost:8080/payment/kakaopay",
         kakaoData,
+        {withCredentials: true}
       );
       if (response.status === 200) {
         console.log(response.data);
@@ -149,7 +150,7 @@ const Main = () => {
             </div>
 
             <div className="gap-10">
-              <BoardList data={data}/>
+              <BoardList data={boardData}/>
             </div>
             <Pagination currentPage={page.number+1} totalPages={page.totalPages} onPageChange={handlePageChange} />
           </div>
