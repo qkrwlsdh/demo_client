@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react"
 import axios from 'axios';
 import { useNavigate, Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { ModalDetailAtom, BoardDetailAtom, ModalUpdateAtom } from "../recoil/BoardAtom";
+import { ModalDetailAtom, BoardDetailAtom, ModalUpdateAtom } from "../../recoil/BoardAtom";
 
 const Detail = () => {
     const [title, setTitle] = useState("");

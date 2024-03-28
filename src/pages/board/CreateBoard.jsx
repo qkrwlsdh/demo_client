@@ -2,8 +2,8 @@ import React from "react"
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { atom, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { loginIdAtom } from "../recoil/MemberAtom";
-import { ModalAtom } from "../recoil/BoardAtom";
+import { loginIdAtom } from "../../recoil/MemberAtom";
+import { ModalAtom } from "../../recoil/BoardAtom";
 const titleState = atom({ key: "title", default: "" });
 const contentState = atom({ key: "content", default: "" });
 

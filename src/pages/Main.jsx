@@ -6,9 +6,9 @@ import { BoardAtom, PagingAtom, ModalAtom, ModalDetailAtom, ModalUpdateAtom } fr
 import { Link, useNavigate } from "react-router-dom";
 import { loginIdAtom, modalIsOpenAtom } from "../recoil/MemberAtom";
 import ReactModal from "react-modal";
-import CreateBoard from "./CreateBoard";
-import Detail from "./Detail";
-import UpdateBoard from "./UpdateBoard";
+import CreateBoard from "./board/CreateBoard";
+import Detail from "./board/Detail";
+import UpdateBoard from "./board/UpdateBoard";
 import { authorizationAtom, cidAtom, tidAtom } from "../recoil/KakaopayAtom";
 import Pagination from "../components/Pagination";
 import { useCookies } from "react-cookie";
@@ -53,7 +53,7 @@ const Main = () => {
         })
         .join('')
       ));
-      console.log(decodedJWT);
+      console.log('decodedJWT : ', decodedJWT);
 
       setUserId(decodedJWT.username);
 

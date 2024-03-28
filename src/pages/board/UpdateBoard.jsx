@@ -2,7 +2,7 @@ import { React, useEffect, useState } from "react"
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { BoardDetailAtom, ModalUpdateAtom } from "../recoil/BoardAtom";
+import { BoardDetailAtom, ModalUpdateAtom } from "../../recoil/BoardAtom";
 
 const UpdateBoard = () => {
     // 지역 state

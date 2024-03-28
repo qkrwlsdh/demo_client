@@ -1,7 +1,7 @@
 import axios from "axios";
 import { React, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { authorizationAtom, cidAtom, tidAtom } from "../recoil/KakaopayAtom";
+import { authorizationAtom, cidAtom, tidAtom } from "../../recoil/KakaopayAtom";
 
 const KakaoResult = (props) => {
     const cid = useRecoilValue(cidAtom);

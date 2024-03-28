@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
-import TailwindToaster from '../components/Toaster';
+import TailwindToaster from '../../components/Toaster';
 import toast from 'react-hot-toast';
 
 export default function FormLayout_Reissue() {

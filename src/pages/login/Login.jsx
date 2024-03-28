@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactModal from "react-modal";
 import { useRecoilState } from 'recoil';
-import { loginIdAtom, loginPwAtom, modalIsOpenAtom, loginResDataAtom, tokenAtom } from "../recoil/MemberAtom";
+import { loginIdAtom, loginPwAtom, modalIsOpenAtom, loginResDataAtom, tokenAtom } from "../../recoil/MemberAtom";
 import toast from "react-hot-toast";
-import TailwindToaster from "../components/Toaster";
+import TailwindToaster from "../../components/Toaster";
 
 const Login = () => {
 
@@ -26,7 +26,7 @@ const Login = () => {
             return false;
         }
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-        // 비밀번호 vaildateion
+        // 비밀번호 vaildation
         if (!passwordRegex.test(password)) {
             toast.error("비밀번호는 숫자, 영문자, 특수문자를 혼합하여 8자 이상으로 입력해주세요.");
             return false;
@@ -201,7 +201,6 @@ const Login = () => {
             </ReactModal>
         <TailwindToaster />
         </section>
-
     );
 }
 

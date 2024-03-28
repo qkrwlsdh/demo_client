@@ -1,47 +1,43 @@
 import axios from 'axios';
 import React, { useState } from 'react'
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { toast } from "react-hot-toast";
-import TailwindToaster from '../components/Toaster';
+import TailwindToaster from '../../components/Toaster';
 
-export default function FormLayout_ID() {
+export default function FormLayout_PW() {
 
     const [ccNo, setCcNo] = useState('');
     const [repBirthDt, setRepBirthDt] = useState('');
+    const [username, setUsername] = useState('');
     let navigate = useNavigate();
 
-    /**
-     * 사업자 번호 입력 이벤트 (총 10자 중 3자-2자-5자로 표현)
-     * @param {*} e
-     */
     const handleNumber = (e) => {
-        const value = e.target.value.replace(/\D+/g, "");
-        const numberLength = 10;
-        let result = "";
+      const value = e.target.value.replace(/\D+/g, "");
+      const numberLength = 10;
+      let result = "";
 
-        for (let i = 0; i < value.length && i < numberLength; i++) {
-          switch (i) {
-            case 3:
-              result += "-";
-              break;
-            case 5:
-              result += "-";
-              break;
+      for (let i = 0; i < value.length && i < numberLength; i++) {
+        switch (i) {
+          case 3:
+            result += "-";
+            break;
+          case 5:
+            result += "-";
+            break;
 
-            default:
-              break;
+          default:
+            break;
         }
+
         result += value[i];
-        }
-        e.target.value = result;
+      }
 
-        setCcNo(e.target.value);
+      e.target.value = result;
+
+      setCcNo(e.target.value);
     };
 
-    /**
-     * 생년월일 입력 이벤트 (총 8자 중 4자-2자-2자로 표현)
-     * @param {*} e
-     */
+
     const handleBirthDate = (e) => {
         const value = e.target.value.replace(/\D+/g, "");
         const numberLength = 8;
@@ -66,48 +62,61 @@ export default function FormLayout_ID() {
         setRepBirthDt(e.target.value);
     };
 
-    /**
-     * API 호출 (요청이 완료되면 완료 메세지를 띄우고 로그인 화면으로 라우팅)
-     * @param {*} e
-     */
     const sendForm = async (e) => {
         e.preventDefault();
         const toastId = toast.loading("Loading...");
         await axios.post(
-            "/api/findUsername",
+            "/api/findUserPassword",
             {
                 "ccNo": ccNo.replace(/\D+/g, ""),
                 "repBirthDt": repBirthDt.replace(/\D+/g, ""),
+                "username": username
             },
             {
                 headers: {
-                'Content-Type': 'application/json' // 헤더에 Content-Type 지정
+                  'Content-Type': 'application/json' // 헤더에 Content-Type 지정
                 }
             },
         ).then(response => {
           console.log(response);
           toast.dismiss(toastId);
-          toast.success("아이디 찾기 요청이 완료되었습니다.\n\n등록된 이메일로 아이디를 전송합니다.");
+          toast.success("비밀번호 찾기 요청이 완료되어\n등록된 이메일로 임시 비밀번호를 전송합니다.");
           setTimeout(() => {
             navigate("/");
           }, 2000);
         }).catch(error => {
           console.error(error);
           toast.dismiss(toastId);
-          toast.error("아이디 찾기 요청을 실패했습니다.\n\n입력한 값을 다시 확인해보세요.");
-
+          toast.error("비밀번호 찾기 요청을 실패했습니다.\n\n입력한 값을 다시 확인해보세요.");
         });
     }
 
   return (
     <>
-      <form className=''>
+      <form>
         <div className="space-y-12 w-9/12 mx-auto">
           <div className="border-b border-gray-900/10 py-12">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">아이디 찾기</h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">등록된 이메일로 아이디를 전송합니다.</p>
+            <h2 className="text-base font-semibold leading-7 text-gray-900">비밀번호 찾기</h2>
+            <p className="mt-1 text-sm leading-6 text-gray-600">등록된 이메일로 임시 비밀번호를 전송합니다.</p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+
+              <div className="sm:col-span-4">
+                <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
+                  아이디
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    onChange={(e) => setUsername(e.target.value)}
+                    autoComplete="10자리"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+
               <div className="sm:col-span-4">
                 <label htmlFor="ccNo" className="block text-sm font-medium leading-6 text-gray-900">
                   사업자 번호
@@ -135,12 +144,12 @@ export default function FormLayout_ID() {
                     name="repBirthDt"
                     type="text"
                     onChange={handleBirthDate}
-                    placeholder='YYYY/MM/DD'
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   <p className='text-xs ml-2 text-slate-500'>"/" 없이 입력해주세요.</p>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
