@@ -85,6 +85,7 @@ export default function FormLayout_ID() {
                 }
             },
         ).then(response => {
+          // TODO 동기로 찾아보기
           console.log(response);
           toast.dismiss(toastId);
           toast.success("아이디 찾기 요청이 완료되었습니다.\n\n등록된 이메일로 아이디를 전송합니다.");
@@ -119,9 +120,10 @@ export default function FormLayout_ID() {
                     id="ccNo"
                     value={ccNo}
                     onChange={handleNumber}
+                    placeholder='000-00-00000'
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-                  <p className='text-xs ml-2 text-slate-500'>"-" 없이 입력해주세요.</p>
+                  <p className='text-xs ml-2 text-slate-500'>사업자 번호 10자리를 "-" 없이 입력해주세요.</p>
                 </div>
               </div>
 
@@ -138,7 +140,7 @@ export default function FormLayout_ID() {
                     placeholder='YYYY/MM/DD'
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-                  <p className='text-xs ml-2 text-slate-500'>"/" 없이 입력해주세요.</p>
+                  <p className='text-xs ml-2 text-slate-500'>YYYY/MM/DD 형식에 맞춰 "/" 없이 입력해주세요.</p>
                 </div>
               </div>
             </div>

@@ -111,7 +111,7 @@ export default function FormLayout_PW() {
                     name="username"
                     id="username"
                     onChange={(e) => setUsername(e.target.value)}
-                    autoComplete="10자리"
+                    placeholder="test@bankedin.io"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -128,9 +128,10 @@ export default function FormLayout_PW() {
                     id="ccNo"
                     value={ccNo}
                     onChange={handleNumber}
+                    placeholder='000-00-00000'
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-                  <p className='text-xs ml-2 text-slate-500'>"-" 없이 입력해주세요.</p>
+                  <p className='text-xs ml-2 text-slate-500'>사업자 번호 10자리를 "-" 없이 입력해주세요.</p>
                 </div>
               </div>
 
@@ -144,9 +145,10 @@ export default function FormLayout_PW() {
                     name="repBirthDt"
                     type="text"
                     onChange={handleBirthDate}
+                    placeholder='YYYY/MM/DD'
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-                  <p className='text-xs ml-2 text-slate-500'>"/" 없이 입력해주세요.</p>
+                  <p className='text-xs ml-2 text-slate-500'>YYYY/MM/DD 형식에 맞춰 "/" 없이 입력해주세요.</p>
                 </div>
               </div>
 

@@ -66,9 +66,9 @@ const Login = () => {
                 }
             } catch (err) {
                 if (err.response.status === 423) {
-                    toast.error("로그인 5회 이상 실패 시 로그인이 불가합니다.");
-                } else if (err.response.status === 401) {
-                    toast.error("로그인 실패");
+                    toast.error("로그인 5회 이상 실패로 계정 잠김. 문의)010-7572-1276");
+                } else if (err.response.status >= 400) {
+                    toast.error("아이디 또는 비밀번호를 다시 확인해주세요.");
                 }
                 console.log('Login/loginBtnClick/err: ', err);
             } finally {
@@ -137,6 +137,10 @@ const Login = () => {
                     toast.error("인증 코드가 맞지 않습니다.");
                     reject();
                 }
+            }).catch(err => {
+                console.log('Login/checkAuth/err: ', err);
+                toast.error("인증 코드가 맞지 않습니다.");
+                reject();
             });
         });
     }

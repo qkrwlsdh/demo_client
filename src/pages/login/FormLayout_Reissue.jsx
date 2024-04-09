@@ -72,13 +72,6 @@ export default function FormLayout_Reissue() {
                   현재 비밀번호
                 </label>
                 <div className="mt-2">
-                  {/* <input
-                    type="password"
-                    name="currentPw"
-                    id="currentPw"
-                    onChange={(e) => setCurrentPw(e.target.value)}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  /> */}
                   <input
                     type="password"
                     {...register('currentPw', {
@@ -92,8 +85,11 @@ export default function FormLayout_Reissue() {
                     placeholder='영문, 숫자, 특수문자 포함 8자 ~ 20자'
                     name="currentPw"
                     id="currentPw"
-                    // onChange={(e) => setCurrentPw(e.target.value)}
-                    className={errors.currentPw ? "text-red-900 bg-red-50 block w-full rounded-md border-0 border-red-500 placeholder-red-700 py-1.5 shadow-sm ring-1 ring-inset ring-red-300 placeholder:text-red-400 focus:ring-2 focus:ring-inset focus:ring-red-500 focus:border-red-500 sm:text-sm sm:leading-6" : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}
+                    className={
+                      errors.currentPw ?
+                      "text-red-900 bg-red-50 block w-full rounded-md border-0 border-red-500 placeholder-red-700 py-1.5 shadow-sm ring-1 ring-inset ring-red-300 placeholder:text-red-400 focus:ring-2 focus:ring-inset focus:ring-red-500 focus:border-red-500 sm:text-sm sm:leading-6"
+                      : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    }
                   />
                   {errors.currentPw ? <p className='text-red-500 text-xs ml-2'>{errors.currentPw.message}</p> : <p className='text-white text-xs ml-2'>temp</p>}
                 </div>
