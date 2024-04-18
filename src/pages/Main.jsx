@@ -121,6 +121,11 @@ const Main = () => {
                 </Link>
               </div>
               <div>
+                <Link to={"/resend-unnotify"} >
+                  <input className="m-5 bg-blue-900 hover:bg-blue-600 text-white font-bold py-2 px-4 border-blue-900 rounded cursor-pointer" type='button' value='미반영 데이터 처리'/>
+                </Link>
+              </div>
+              <div>
                 <Link>
                   <input className="m-5 bg-blue-900 hover:bg-blue-600 text-white font-bold py-2 px-4 border-blue-900 rounded cursor-pointer" type='button' value='팝업으로 작성하기' onClick={() => setModalIsOpen(true)}/>
                 </Link>

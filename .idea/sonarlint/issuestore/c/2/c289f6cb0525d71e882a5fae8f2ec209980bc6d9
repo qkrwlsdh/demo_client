@@ -1,11 +1,0 @@
-
-Ijavascript:S1128"(Remove this unused import of 'useState'.(»Æœşÿÿÿÿ
-Hjavascript:S6774",'currentPage' is missing in props validation(ê´×¾
-Gjavascript:S6774"+'totalPages' is missing in props validation(ê´×¾
-Ijavascript:S6774"-'onPageChange' is missing in props validation(ê´×¾
-ßjavascript:S6848"ÂAvoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element.(§íÅ³
-{javascript:S1082"_Visible, non-interactive elements with click handlers must have at least one keyboard listener.(§íÅ³
-ajavascript:S1481%"ERemove the declaration of the unused 'setModalDetailIsOpen' variable.(ÿÄÌ¾
-^javascript:S1854%"BRemove this useless assignment to variable "setModalDetailIsOpen".(ÿÄÌ¾
-fjavascript:S1481&"ERemove the declaration of the unused 'setModalUpdateIsOpen' variable.(Üş½ÿÿÿÿÿ
-cjavascript:S1854&"BRemove this useless assignment to variable "setModalUpdateIsOpen".(Üş½ÿÿÿÿÿ
