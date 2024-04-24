@@ -1,0 +1,80 @@
+.table-container {
+  display: flex;
+  justify-content: left;
+  width: 1200px
+}
+
+.table-outline {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2개의 열을 갖는 그리드 */
+  width: 480px
+}
+.table-outline li { 
+  padding: 10px;
+}
+
+.table {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2개의 열을 갖는 그리드 */
+}
+
+.table li {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+.itemLabel {  
+  background: #e1e5ecda;
+  width: 130px;
+  color: darkblue;
+} 
+.itemValue {
+  width: 370px
+} 
+.table li input{
+  border: 1px solid #ccc;
+  padding: 10px; 
+  width: 100%;
+}
+.table li label { 
+  float: left;
+  margin-right: 20%;  
+}
+.table li input[type="radio"]{
+  border: 1px solid #ccc;
+  padding: 10px; 
+  width: auto;
+}
+.table li select {
+  border: 1px solid #ccc;
+  padding: 10px; 
+  width: 100%
+}
+
+.table li select {
+  border: 1px solid #ccc;
+  padding: 10px; 
+  width: 100%
+}
+h1{
+  font-size : 40px;
+}
+
+button {   
+  top:0%;
+  float: right;
+  background-color:#70baff;
+  color: #fff;
+  border:none; 
+  border-radius:10px; 
+  padding:10px;
+  min-height:40px; 
+  min-width: 70px;
+}

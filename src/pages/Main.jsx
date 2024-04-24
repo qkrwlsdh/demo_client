@@ -138,6 +138,11 @@ const Main = () => {
             </div>
             <div className="w-full flex items-center justify-between py-5">
               <div>
+                <Link to={"/keyin-smartro"} >
+                  <input className="m-5 bg-blue-900 hover:bg-blue-600 text-white font-bold py-2 px-4 border-blue-900 rounded cursor-pointer" type='button' value='스마트로 수기결제' />
+                </Link>
+              </div>
+              <div>
                 <Link>
                   <input className="m-5 bg-blue-900 hover:bg-blue-600 text-white font-bold py-2 px-4 border-blue-900 rounded cursor-pointer" type='button' value='카카오 결제' onClick={() => kakaopay()}/>
                 </Link>
