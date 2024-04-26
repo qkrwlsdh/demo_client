@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './common/CommFunction';
 import Detail from './pages/board/Detail';
 import CreateBoard from './pages/board/CreateBoard';
 import UpdateBoard from './pages/board/UpdateBoard';

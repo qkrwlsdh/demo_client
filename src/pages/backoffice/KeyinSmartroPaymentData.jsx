@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import './Table.css'; // CSS 파일을 불러옵니다.
-import { Radio } from '../../components/Radio'
+import './Table.css'; // CSS 파일을 불러옵니다. 
+import { Radio } from '../../components/Radio' 
 
 function KeyinSmartroPaymentData() {
  
   const [isLoading, setIsLoading] = useState(false);  
-  
+   
   const [inputs, setInputs] = useState({
+    PayMethod: "CARD",  
     MerchantId: "mid3", //가맹점코드
     PoIdx: "3", //가맹점코드
     Mid: "t_2404033m",  //가맹점스마트로 id
-    poCd: "SMTR", //PG사
+    PoCd: "SMTR", //PG사
     Moid: "",  //주문번호
     StateCd: "0",   // 승인[0] 취소[1] 구분
     GoodsName: "My Macarong",  //상품명
@@ -19,15 +20,12 @@ function KeyinSmartroPaymentData() {
     BuyerName: "ME",  //구매자명
     BuyerTel: "01025965546",  //휴대폰번호
     BuyerEmail: "noname@smartro.co.kr",   //이메일
-    BuyerAuthNum: "800915",  //생년월일/사업자번호
-    CardCode: "06",  //신용카드번호
+    BuyerAuthNum: "800915",  //생년월일/사업자번호 
     CardNum: "5241440824913343",  //신용카드번호 
     CardExpire: "2712",  //카드유효기간 YYMM
     CardQuota: "00",  //할부개월
     CardType: "01",  //개인/법인
     CardPwd: "10",  //비밀번호
-    PayMethod: "CARD",  
-    
   });
 
   // 0부터 12까지의 숫자 배열 생성
@@ -41,19 +39,52 @@ function KeyinSmartroPaymentData() {
         {i === 0 ? '일시불' : `${i}개월`}
       </option>
     );
+  } 
+ 
+  /**
+   * 저장 전 데이터 체크 
+   * @returns 
+   */
+  function checkBeforeSave(inputs){
+    if(!window.isValidYYMMDate(inputs.CardExpire)) { 
+      alert("카드유효기간이 잘못 입력 됐습니다.");
+      return;
+    }
+    if(!window.isHpFormat(inputs.BuyerTel)) { 
+      alert("핸드폰번호가 잘못 입력 됐습니다.");
+      return;
+    }
+    if(!window.isValidEmail(inputs.BuyerEmail)) { 
+      alert("이메일주소가 잘못 입력 됐습니다.");
+    }  
+     
+    if(inputs.CardNum.replace(/\D+/g, "").length !== 16) { 
+      alert("카드번호가 잘못 입력 됐습니다.");
+    } 
   }
 
-  const onSubmit = async (e) => {  
+  const onSubmit = async (e) => {
+    e.preventDefault();  //이벤트(예: 클릭, 제출 등)의 기본 동작을 취소하는 JavaScript의 메서드
     setIsLoading(true);   
     try{ 
-      e.preventDefault();  //이벤트(예: 클릭, 제출 등)의 기본 동작을 취소하는 JavaScript의 메서드
-      // 비동기 fetch
+
+      checkBeforeSave(inputs);
+      
+      const sendInputs = inputs  // 재생성 용  
+      sendInputs.BuyerTel = sendInputs.BuyerTel.replace(/\D+/g, ""); 
+      sendInputs.GoodsCnt = sendInputs.GoodsCnt.replace(/\D+/g, ""); 
+      sendInputs.Amt = sendInputs.Amt.replace(/\D+/g, "");   
+      sendInputs.CardNum = sendInputs.CardNum.replace(/\D+/g, ""); 
+
+
+
+      
       const response = await fetch('/payment/key-in-smartro', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',  //array, list -> JSON format
             },
-            body: JSON.stringify(inputs),
+            body: JSON.stringify(sendInputs),
           });
       
       const message = await response.text();
@@ -73,45 +104,24 @@ function KeyinSmartroPaymentData() {
 
   };
 
-  // 핸드폰번호 유효성 검사
-  const checkPhonenumber = (e) => {
-    // '-' 입력 시
-    var regExp = /^01(?:0|1|[6-9])-(?:\d{3}|\d{4})-\d{4}$/
-    // 숫자만 입력시
-    var regExp2 = /^01(?:0|1|[6-9])(?:\d{3}|\d{4})\d{4}$/
-    // 형식에 맞는 경우 true 리턴
-    console.log('핸드폰번호 유효성 검사 :: ', regExp.test(e.target.value))
-  }
-
-  //비밀번호 유효성 검사
-  const checkPassword = (e) => {
-      //  8 ~ 10자 영문, 숫자 조합
-      var regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z]{8,10}$/
-      // 형식에 맞는 경우 true 리턴
-      console.log('비밀번호 유효성 검사 :: ', regExp.test(e.target.value))
-  }
-
-  // 이메일 유효성 검사
-  const checkEmail = (e) => {
-      var regExp = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
-      // 형식에 맞는 경우 true 리턴
-      console.log('이메일 유효성 검사 :: ', regExp.test(e.target.value))
-  }
-
   //입력 상자의 변경 이벤트가 발생했을 때 호출, 여러 입력 상자를 관리할 때 사용
   const onChange = (e) => {
     const { name, value } = e.target; //이벤트가 발생한 요소에 접근, name과 value를 추출하여 해당 입력 상자의 이름과 새로운 값에 접근
     // 입력 상자들의 상태를 업데이트
-    // 이때, 이전 상태를 유지하기 위해 spread 연산자(...)를 사용하여 기존 상태를 복사한 후 변경된 값을 적용
+    // 이때, 이전 상태를 유지하기 위해 spread 연산자(...)를 사용하여 기존 상태를 복사한 후 변경된 값을 적용 
     setInputs({  
       ...inputs,
       [name]: value,
-    }); 
-  }; 
+    });    
+  };  
+  
+  const handleMouseDown = (e) => {
+    e.preventDefault(); // 이벤트의 기본 동작을 막습니다.
+  };
 
   return (
     <div>
-      <h1>신용카드 수기결제</h1>
+      <h1>신용카드 승인 수기결제</h1>
       
       <form onSubmit={onSubmit}> 
         <button type="submit">전송</button>
@@ -132,7 +142,7 @@ function KeyinSmartroPaymentData() {
 
                 <li className="itemLabel">PG사</li> 
                 <li className="itemValue">
-                  <select name="poCd" value={inputs.poCd} onChange={onChange}>
+                  <select name="PoCd" value={inputs.PoCd} onChange={onChange}>
                     <option value="">=선택=</option>
                     <option value="SMTR">스마트로</option>
                     <option value="KCP">KCP</option>
@@ -144,12 +154,12 @@ function KeyinSmartroPaymentData() {
                       name="Moid"
                       placeholder="주문번호" 
                       value={inputs.Moid}
-                    />
+                    /> 
                 </li>
                 
                 <li className="itemLabel">승인/취소</li> 
                 <li className="itemValue">
-                  <select name="StateCd" value={inputs.StateCd} onChange={onChange}>
+                  <select name="StateCd" value={inputs.StateCd}  onMouseDown={handleMouseDown}  onChange={onChange}  >
                     <option value="">=선택=</option>
                     <option value="0">승인</option>
                     <option value="1">취소</option>
@@ -174,18 +184,26 @@ function KeyinSmartroPaymentData() {
                 <li className="itemLabel">상품개수</li> 
                 <li className="itemValue"><input type="text"
                       name="GoodsCnt"
-                      placeholder="상품개수"
-                      onChange={onChange}
+                      placeholder="상품개수" 
+                      onChange={(e) => { 
+                        window.handleInputMoney(e);
+                        onChange(e);
+                      }}    
                       value={inputs.GoodsCnt}
+                      style={{ textAlign: 'right' }} 
                     />
                 </li>
                 
                 <li className="itemLabel">결제요청금액</li> 
                 <li className="itemValue"><input type="text"
                       name="Amt"
-                      placeholder="결제요청금액"
-                      onChange={onChange}
+                      placeholder="결제요청금액" 
+                      onChange={(e) => { 
+                        window.handleInputMoney(e);
+                        onChange(e);
+                      }}    
                       value={inputs.Amt}
+                      style={{ textAlign: 'right' }} 
                     />
                 </li>
 
@@ -205,13 +223,14 @@ function KeyinSmartroPaymentData() {
                 </li>
 
                 <li className="itemLabel">휴대폰번호</li> 
-                <li className="itemValue"><input type="text"
-                      type="text" 
-                      onChange={onChange}
-                      placeholder="핸드폰 번호를 입력하세요 (예: 010-1234-5678)"
+                <li className="itemValue"><input type="text" 
                       name="BuyerTel"  
-                      value={inputs.BuyerTel}
-                      onBlur={checkPhonenumber}
+                      placeholder="휴대폰 번호"
+                      value={ inputs.BuyerTel }  
+                      onChange={(e) => { 
+                        window.handleInputCellPhoneType(e);
+                        onChange(e)
+                      }}  
                     />
                 </li>
                 
@@ -238,21 +257,16 @@ function KeyinSmartroPaymentData() {
             </li>
             
             <li>
-              <ul className="table">
-                <li className="itemLabel">카드사</li> 
-                <li className="itemValue"><input type="text"
-                      name="CardCode"
-                      placeholder="카드사"
-                      onChange={onChange}
-                      value={inputs.CardCode}
-                    />
-                </li>
+              <ul className="table">   
 
                 <li className="itemLabel">신용카드번호</li> 
                 <li className="itemValue"><input type="text"
                       name="CardNum"
-                      placeholder="신용카드번호"
-                      onChange={onChange}
+                      placeholder="신용카드번호" 
+                      onChange={(e) => { 
+                        window.handleInputCreditCard(e);
+                        onChange(e);
+                      }}    
                       value={inputs.CardNum}
                     />
                 </li>
@@ -260,8 +274,11 @@ function KeyinSmartroPaymentData() {
                 <li className="itemLabel">카드유효기간</li> 
                 <li className="itemValue"><input type="text"
                       name="CardExpire"
-                      placeholder="카드유효기간"
-                      onChange={onChange}
+                      placeholder="카드유효기간 (예 : YY/MM)" 
+                      onChange={(e) => { 
+                        window.handleInputYYMM(e);
+                        onChange(e);
+                      }}
                       value={inputs.CardExpire}
                     />
                 </li>
@@ -296,12 +313,18 @@ function KeyinSmartroPaymentData() {
 
 
         <input name="PayMethod" type="hidden" value="CARD"/>
-
         <input name="MerchantId" type="hidden" value=""/>
-
-        <input name="PoIdx" type="hidden" value=""/>
+        <input name="PoIdx" type="hidden" value="3"/>
+        <input name="CardCode" type="hidden" placeholder="카드사" />
  
       </form>
+      
+        {/* <Modal
+            open={openDetailCmctf}
+            onClose={handleDetailClose}
+        >
+          <BoardDetailModal handleClose={handleDetailClose} sendData={toModalData}/>
+        </Modal> */}
     </div> 
   );
 }
