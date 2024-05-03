@@ -1,6 +1,6 @@
 import "./Radio.css";
 
-export const Radio = ({ children, value, name, defaultChecked, checked, disabled, onChange }) => (
+export const Radio = ({ children, value, name, defaultChecked, checked, disabled, onChange, required }) => (
   <label>
     <input
       type="radio"
@@ -11,6 +11,7 @@ export const Radio = ({ children, value, name, defaultChecked, checked, disabled
       disabled={disabled}
       onChange={onChange}
       className="gender-input"
+      required={required}
     />
     {children}
   </label>

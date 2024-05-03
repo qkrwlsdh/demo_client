@@ -1,31 +1,48 @@
-import React, { useState } from "react";
-import './Table.css'; // CSS 파일을 불러옵니다. 
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from 'react-router-dom';
+import './KeyinSmartroPaymentData.css'; // CSS 파일을 불러옵니다. 
 import { Radio } from '../../components/Radio' 
+import FailedKeyinSmartroListModal from './modal/FailedKeyinSmartroListModal' 
+import axios from 'axios';
 
 function KeyinSmartroPaymentData() {
  
   const [isLoading, setIsLoading] = useState(false);  
+  const [merchantData, setMerchantData] = useState();
+  const [merchantNm, setMerchantNm] = useState();
+  const [isVisibleItem, setIsVisibleItem] = useState(false);
+
+  //let { merchantId } = useParams();
+  const location = useLocation();
+  let merchantId = location.state.merchantId;  
    
   const [inputs, setInputs] = useState({
-    PayMethod: "CARD",  
-    MerchantId: "mid3", //가맹점코드
-    PoIdx: "3", //가맹점코드
-    Mid: "t_2404033m",  //가맹점스마트로 id
-    PoCd: "SMTR", //PG사
-    Moid: "",  //주문번호
+    PayMethod: "CARD", 
     StateCd: "0",   // 승인[0] 취소[1] 구분
-    GoodsName: "My Macarong",  //상품명
-    GoodsCnt: "1",  //상품개수
-    Amt: "1004",  //결제요청금액
-    BuyerName: "ME",  //구매자명
-    BuyerTel: "01025965546",  //휴대폰번호
-    BuyerEmail: "noname@smartro.co.kr",   //이메일
-    BuyerAuthNum: "800915",  //생년월일/사업자번호 
+ 
+    // Mid: "t_2404033m",  //가맹점스마트로 id
+    // Moid: "",  //주문번호 
+
+    //=====================================
+    // 내부에서 쓰이는 코드 값 
+    // merchantId: "mid3", //가맹점코드
+    // poIdx: "3", //가맹점 상위 PG사 index key
+    // poCd: "SMTR", //PG사 코드
+    //=====================================
+
     CardNum: "5241440824913343",  //신용카드번호 
-    CardExpire: "2712",  //카드유효기간 YYMM
-    CardQuota: "00",  //할부개월
-    CardType: "01",  //개인/법인
-    CardPwd: "10",  //비밀번호
+  
+    // GoodsName: "My Macarong",  //상품명
+    // GoodsCnt: "1",  //상품개수
+    // Amt: "1004",  //결제요청금액
+    // BuyerName: "ME",  //구매자명
+    // BuyerTel: "01025965546",  //휴대폰번호
+    // BuyerEmail: "noname@smartro.co.kr",   //이메일
+    // BuyerAuthNum: "800915",  //생년월일/사업자번호 
+    // CardExpire: "2712",  //카드유효기간 YYMM
+    // CardQuota: "00",  //할부개월
+    // CardType: "01",  //개인/법인
+    // CardPwd: "10",  //비밀번호
   });
 
   // 0부터 12까지의 숫자 배열 생성
@@ -48,19 +65,71 @@ function KeyinSmartroPaymentData() {
   function checkBeforeSave(inputs){
     if(!window.isValidYYMMDate(inputs.CardExpire)) { 
       alert("카드유효기간이 잘못 입력 됐습니다.");
-      return;
-    }
-    if(!window.isHpFormat(inputs.BuyerTel)) { 
+      return false;
+    } else if(!window.isHpFormat(inputs.BuyerTel)) { 
       alert("핸드폰번호가 잘못 입력 됐습니다.");
+      return false;
+    } else if(!window.isValidEmail(inputs.BuyerEmail)) { 
+      alert("이메일주소가 잘못 입력 됐습니다.");
+      return false;
+    } else if(inputs.CardNum === null || inputs.CardNum === "" || inputs.CardNum.replace(/\D+/g, "").length !== 16) { 
+      alert("카드번호가 잘못 입력 됐습니다.");
+      return false;
+    } 
+    return true;
+  }
+
+  // onLoad
+  useEffect(() => { 
+    if (merchantId ===  null || merchantId === ""){
+      alert ("가맹점 코드가 잘못되었습니다. 관리자에게 문의 하시기 바랍니다.");
       return;
     }
-    if(!window.isValidEmail(inputs.BuyerEmail)) { 
-      alert("이메일주소가 잘못 입력 됐습니다.");
-    }  
-     
-    if(inputs.CardNum.replace(/\D+/g, "").length !== 16) { 
-      alert("카드번호가 잘못 입력 됐습니다.");
+    getMerchantInfo(); // 가맹점 코드에 따른 정보 가져오기  
+
+  }, [merchantId]);
+
+
+  useEffect(() => {   
+    if (merchantData === undefined) return  
+    //console.log("merchantData.poIdx", merchantData.poIdx)
+    setInputs({
+      ...inputs,
+      Mid: merchantData.poMctId,
+      
+      merchantId: merchantData.merchantId,
+      poCd: merchantData.poCd,
+      poIdx: merchantData.poIdx,
+    }); 
+
+    //카유비생인 경우에만 관련 항복 view
+    setIsVisibleItem((merchantData.authType === "03")); 
+
+  }, [merchantData]);
+
+
+  const getMerchantInfo = async() =>{
+    setIsLoading(true);   
+    try {
+      const response = await axios.get(`/api/merchantId-info/${merchantId}`);
+      setMerchantData(response.data);
+      setMerchantNm(response.data.merchantNm);  
+ 
+    } catch (error) { 
+        console.error('Error fetching post:', error.message);
+    } finally {
+      setIsLoading(false); // 데이터 로딩이 완료되면 loading 상태를 false로 변경
     } 
+  }
+
+  function requireItemBlanked(obj, items){
+    console.log("requireItemBlanked", items)
+    for (let i = 0; i < items.length; i++) {
+      console.log(items[i], obj[items[i]])
+      if (!obj[items[i]]) { 
+         
+      }
+    }
   }
 
   const onSubmit = async (e) => {
@@ -68,17 +137,53 @@ function KeyinSmartroPaymentData() {
     setIsLoading(true);   
     try{ 
 
-      checkBeforeSave(inputs);
+      //hidden에서 필수입력 체크  
+      const hiddenInputs = document.querySelectorAll('input[type="hidden"][required]');
+      let isValid = true;
       
-      const sendInputs = inputs  // 재생성 용  
-      sendInputs.BuyerTel = sendInputs.BuyerTel.replace(/\D+/g, ""); 
-      sendInputs.GoodsCnt = sendInputs.GoodsCnt.replace(/\D+/g, ""); 
-      sendInputs.Amt = sendInputs.Amt.replace(/\D+/g, "");   
+      hiddenInputs.forEach(input => {
+        console.log(input.name, input.value)
+        if (!input.value) {
+          isValid = false;
+        }
+      });
+      
+      if (!isValid) {
+        alert("[hidden value Empty] System Error. 관리자에게 문의 하시기 바랍니다.");
+      }
+
+ 
+      // 오입력 체크 
+      if(!checkBeforeSave(inputs)){
+        console.log("checkBeforeSave false ");
+        return;
+      }  
+      
+      let sendInputs = { ...inputs };  // 재생성 용  
+
+      // only 숫자만
+      if (!(sendInputs.BuyerTel === null || sendInputs.BuyerTel === "")){
+        sendInputs.BuyerTel = sendInputs.BuyerTel.replace(/\D+/g, "");  
+      } 
+      if (!(sendInputs.GoodsCnt === null || sendInputs.GoodsCnt === "")){
+        sendInputs.GoodsCnt = sendInputs.GoodsCnt.replace(/\D+/g, "");  
+      } 
+      if (!(sendInputs.Amt === null || sendInputs.Amt === "")){
+        sendInputs.Amt = sendInputs.Amt.replace(/\D+/g, "");  
+      } 
       sendInputs.CardNum = sendInputs.CardNum.replace(/\D+/g, ""); 
+      sendInputs.CardExpire = sendInputs.CardExpire.replace(/\D+/g, ""); 
 
+      //console.log ("sendInputs.poIdx", sendInputs.poIdx)
 
+      Object.entries(sendInputs).forEach(([key, value]) => {
 
-      
+        // 각 항목의 키와 값을 이용하여 필요한 작업을 수행합니다.
+        // 예를 들어, 상태(state)를 업데이트하거나 다른 로직을 수행할 수 있습니다.
+        console.log(`Key: ${key}, Value: ${value}`);
+        // 여기에 필요한 로직 추가
+      });
+  
       const response = await fetch('/payment/key-in-smartro', {
             method: 'POST',
             headers: {
@@ -119,6 +224,44 @@ function KeyinSmartroPaymentData() {
     e.preventDefault(); // 이벤트의 기본 동작을 막습니다.
   };
 
+  
+  const handleFailedKeyinSmartroListModalRowDoubleClick = (rowData) => {
+    console.log("handleFailedKeyinSmartroListModalRowDoubleClick===>");
+    console.log(rowData);
+    setInputs({
+      ...inputs,
+      // transId: rowData.transId, 
+      Mid: rowData.poMctId,
+      Moid: rowData.mctTransId,
+
+      CardNum: rowData.cardNo,  //신용카드번호 
+    
+      GoodsName: rowData.goodsNm,  //상품명
+      Amt: String(rowData.transAmt),  //결제요청금액
+      BuyerName: rowData.payerNm,  //구매자명
+      BuyerTel: rowData.payerTel,  //휴대폰번호 "01025965546"
+      BuyerEmail: rowData.payerEmail,   //이메일
+      CardQuota: rowData.installment,  //할부개월
+
+      // //=====================================
+      // // 내부에서 쓰이는 코드 값 
+      merchantId: rowData.merchant.merchantId, //가맹점코드
+      poIdx: rowData.poIdx, //가맹점 상위 PG사 index key
+      poCd: rowData.poCd, //PG사 코드
+      // //=====================================
+
+
+      // BuyerAuthNum: rowData.,  //생년월일/사업자번호 
+      // CardExpire: rowData.,  //카드유효기간 YYMM
+      // CardType: rowData.,  //개인/법인
+      // CardPwd: rowData.,  //비밀번호
+      // GoodsCnt: rowData.,  //상품개수
+
+    }); 
+
+    //setState({ selectedRowData: rowData });
+  };
+
   return (
     <div>
       <h1>신용카드 승인 수기결제</h1>
@@ -131,18 +274,16 @@ function KeyinSmartroPaymentData() {
 
               <ul className="table">
 
-                <li className="itemLabel">가맹점ID</li> 
-                <li className="itemValue"><input type="text"
-                      name="Mid"
-                      placeholder="가맹점ID"
-                      onChange={onChange}
-                      value={inputs.Mid}
-                    />
+                <li className="itemLabel">가맹점</li> 
+                <li className="itemValue"> 
+                  <div style={{ width:'100%', textAlign: 'left'}}>
+                    {merchantNm}
+                  </div> 
                 </li>
 
                 <li className="itemLabel">PG사</li> 
                 <li className="itemValue">
-                  <select name="PoCd" value={inputs.PoCd} onChange={onChange}>
+                  <select name="poCd" value={inputs.poCd} onChange={onChange}>
                     <option value="">=선택=</option>
                     <option value="SMTR">스마트로</option>
                     <option value="KCP">KCP</option>
@@ -150,16 +291,18 @@ function KeyinSmartroPaymentData() {
                 </li> 
 
                 <li className="itemLabel">주문번호</li> 
-                <li className="itemValue"><input type="text"
+                <li className="itemValue"><input type="text" 
                       name="Moid"
                       placeholder="주문번호" 
+                      onChange={onChange}
                       value={inputs.Moid}
                     /> 
+                    <FailedKeyinSmartroListModal onRowDoubleClickDataReceivedData={handleFailedKeyinSmartroListModalRowDoubleClick}  />
                 </li>
                 
                 <li className="itemLabel">승인/취소</li> 
                 <li className="itemValue">
-                  <select name="StateCd" value={inputs.StateCd}  onMouseDown={handleMouseDown}  onChange={onChange}  >
+                  <select name="StateCd" value={inputs.StateCd}  onMouseDown={handleMouseDown}  onChange={onChange} required>
                     <option value="">=선택=</option>
                     <option value="0">승인</option>
                     <option value="1">취소</option>
@@ -195,7 +338,7 @@ function KeyinSmartroPaymentData() {
                 </li>
                 
                 <li className="itemLabel">결제요청금액</li> 
-                <li className="itemValue"><input type="text"
+                <li className="itemValue"><input type="text" required
                       name="Amt"
                       placeholder="결제요청금액" 
                       onChange={(e) => { 
@@ -235,7 +378,7 @@ function KeyinSmartroPaymentData() {
                 </li>
                 
                 <li className="itemLabel">이메일</li> 
-                <li className="itemValue"><input type="text"
+                <li className="itemValue"><input type="text" 
                       name="BuyerEmail"
                       placeholder="이메일"
                       onChange={onChange}
@@ -243,16 +386,18 @@ function KeyinSmartroPaymentData() {
                     />
                 </li>
                 
-                <li className="itemLabel">생년월일/사업자번호</li> 
-                <li className="itemValue"><input type="text"
-                      name="BuyerAuthNum"
-                      placeholder="이메일"
-                      onChange={onChange}
-                      value={inputs.BuyerAuthNum}
-                    />
-                </li>
-
-                
+                {isVisibleItem && (
+                  <>
+                    <li className="itemLabel">생년월일 /<br/>사업자번호</li> 
+                    <li className="itemValue"><input type="text" 
+                          name="BuyerAuthNum"
+                          placeholder="생년월일 or 사업자번호" required
+                          onChange={onChange}
+                          value={inputs.BuyerAuthNum}
+                        />
+                    </li> 
+                  </>
+                )} 
               </ul>
             </li>
             
@@ -260,7 +405,7 @@ function KeyinSmartroPaymentData() {
               <ul className="table">   
 
                 <li className="itemLabel">신용카드번호</li> 
-                <li className="itemValue"><input type="text"
+                <li className="itemValue"><input type="text" required
                       name="CardNum"
                       placeholder="신용카드번호" 
                       onChange={(e) => { 
@@ -272,7 +417,7 @@ function KeyinSmartroPaymentData() {
                 </li>
                 
                 <li className="itemLabel">카드유효기간</li> 
-                <li className="itemValue"><input type="text"
+                <li className="itemValue"><input type="text" required
                       name="CardExpire"
                       placeholder="카드유효기간 (예 : YY/MM)" 
                       onChange={(e) => { 
@@ -285,7 +430,7 @@ function KeyinSmartroPaymentData() {
                 
                 <li className="itemLabel">할부기간</li> 
                 <li className="itemValue">
-                  <select name="CardQuota" value={inputs.CardQuota} onChange={onChange}>
+                  <select name="CardQuota" value={inputs.CardQuota} onChange={onChange} required>
                     <option value="">=선택=</option>
                     {options}
                   </select> 
@@ -293,38 +438,37 @@ function KeyinSmartroPaymentData() {
                 
                 <li className="itemLabel">개인/법인</li> 
                 <li className="itemValue">
-                  <Radio name="CardType" value="01" checked={inputs.CardType === "01"} onChange={onChange} >개인</Radio> 
+                  <Radio name="CardType" value="01" checked={inputs.CardType === "01"} onChange={onChange} required="required">개인</Radio> 
                   <Radio name="CardType" value="02" checked={inputs.CardType === "02"} onChange={onChange} >법인</Radio>
-                </li> 
-                
-                <li className="itemLabel">비밀번호</li> 
-                <li className="itemValue"><input type="password"
-                      name="CardPwd"
-                      placeholder="비밀번호"
-                      onChange={onChange}
-                      value={inputs.CardPwd}
-                    />
-                </li> 
+                </li>  
+
+                {isVisibleItem && (
+                  <> 
+                    <li className="itemLabel">비밀번호</li> 
+                    <li className="itemValue"><input type="password" required
+                          name="CardPwd"
+                          placeholder="비밀번호"
+                          onChange={onChange}
+                          value={inputs.CardPwd}
+                        />
+                    </li>
+                  </>
+                )} 
               </ul>
             </li>
             
           </ul> 
         </div>
-
-
-        <input name="PayMethod" type="hidden" value="CARD"/>
-        <input name="MerchantId" type="hidden" value=""/>
-        <input name="PoIdx" type="hidden" value="3"/>
-        <input name="CardCode" type="hidden" placeholder="카드사" />
  
-      </form>
-      
-        {/* <Modal
-            open={openDetailCmctf}
-            onClose={handleDetailClose}
-        >
-          <BoardDetailModal handleClose={handleDetailClose} sendData={toModalData}/>
-        </Modal> */}
+        <input name="PayMethod" type="text" defaultValue={inputs.PayMethod} required/> 
+        <input name="Mid" type="text" defaultValue={inputs.Mid} placeholder="카드사 스마트로ID" required/>
+        <input name="merchantId" type="text" defaultValue={inputs.merchantId} placeholder = "가맹점코드" required/>
+        <input name="poIdx" type="text" defaultValue={inputs.poIdx} required/> 
+
+        <input name="CardCode" type="text" defaultValue={inputs.CardCode} placeholder="카드사" />
+        <input name="transId" type="text" defaultValue={inputs.transId}/>
+ 
+      </form>  
     </div> 
   );
 }

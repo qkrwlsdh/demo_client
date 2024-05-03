@@ -105,6 +105,7 @@ const Main = () => {
         window.open(response.data.next_redirect_pc_url);
       }
     }
+    const merchantId = 'mid3';
 
     return(
       <>
@@ -138,7 +139,7 @@ const Main = () => {
             </div>
             <div className="w-full flex items-center justify-between py-5">
               <div>
-                <Link to={"/keyin-smartro"} >
+                <Link to={"/keyin-smartro"} state={{merchantId: merchantId}}>
                   <input className="m-5 bg-blue-900 hover:bg-blue-600 text-white font-bold py-2 px-4 border-blue-900 rounded cursor-pointer" type='button' value='스마트로 수기결제' />
                 </Link>
               </div>
