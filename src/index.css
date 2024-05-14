@@ -1,3 +1,66 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .all-\[unset\] {
+      all: unset;
+    }
+  }
+
+  :root {
+    --finhubprimary-2: rgba(187, 183, 255, 1);
+    --finhubprimary-color: rgba(118, 111, 255, 1);
+    --finhubsecondary-1: rgba(246, 99, 67, 1);
+    --finhubsecondary-2: rgba(124, 208, 255, 1);
+    --finhubsecondary-3: rgba(34, 8, 106, 1);
+    --neutralnutral: rgba(246, 250, 249, 1);
+    --neutralnutral-01: rgba(246, 250, 249, 1);
+    --neutralnutral-02: rgba(222, 232, 232, 1);
+    --neutralnutral-03: rgba(201, 210, 212, 1);
+    --neutralnutral-04: rgba(180, 188, 192, 1);
+    --neutralnutral-05: rgba(159, 166, 172, 1);
+    --neutralnutral-06: rgba(138, 144, 152, 1);
+    --neutralnutral-07: rgba(117, 122, 132, 1);
+    --neutralnutral-08: rgba(96, 100, 112, 1);
+    --neutralnutral-09: rgba(75, 78, 92, 1);
+    --neutralnutral-10: rgba(54, 56, 72, 1);
+    --neutralnutral-11: rgba(33, 34, 52, 1);
+    --neutralnutral-12: rgba(12, 12, 32, 1);
+    --primaryprimary-01: rgba(210, 207, 255, 1);
+    --primaryprimary-02: rgba(187, 183, 255, 1);
+    --primaryprimary-03: rgba(164, 159, 255, 1);
+    --primaryprimary-04: rgba(141, 135, 255, 1);
+    --primaryprimary-05: rgba(118, 111, 255, 1);
+    --primaryprimary-06: rgba(93, 88, 210, 1);
+    --primaryprimary-07: rgba(70, 66, 164, 1);
+    --primaryprimary-08: rgba(47, 44, 118, 1);
+    --primaryprimary-09: rgba(24, 22, 72, 1);
+    --secondary-1secondary-101: rgba(254, 207, 199, 1);
+    --secondary-1secondary-102: rgba(252, 180, 166, 1);
+    --secondary-1secondary-103: rgba(250, 153, 133, 1);
+    --secondary-1secondary-104: rgba(248, 126, 100, 1);
+    --secondary-1secondary-105: rgba(246, 99, 67, 1);
+    --secondary-1secondary-106: rgba(200, 81, 53, 1);
+    --secondary-1secondary-107: rgba(156, 62, 40, 1);
+    --secondary-1secondary-108: rgba(112, 43, 27, 1);
+    --secondary-1secondary-109: rgba(68, 24, 14, 1);
+    --secondary-2secondary-201: rgba(208, 240, 255, 1);
+    --secondary-2secondary-202: rgba(187, 232, 255, 1);
+    --secondary-2secondary-203: rgba(166, 224, 255, 1);
+    --secondary-2secondary-204: rgba(145, 216, 255, 1);
+    --secondary-2secondary-205: rgba(124, 208, 255, 1);
+    --secondary-2secondary-206: rgba(100, 168, 210, 1);
+    --secondary-2secondary-207: rgba(75, 130, 164, 1);
+    --secondary-2secondary-208: rgba(50, 92, 118, 1);
+    --secondary-2secondary-209: rgba(25, 54, 72, 1);
+    --secondary-3secondary-301: rgba(198, 188, 222, 1);
+    --secondary-3secondary-302: rgba(157, 143, 193, 1);
+    --secondary-3secondary-303: rgba(116, 98, 164, 1);
+    --secondary-3secondary-304: rgba(75, 53, 135, 1);
+    --secondary-3secondary-305: rgba(34, 8, 106, 1);
+    --secondary-3secondary-306: rgba(28, 6, 88, 1);
+    --secondary-3secondary-307: rgba(23, 5, 72, 1);
+    --secondary-3secondary-308: rgba(18, 4, 56, 1);
+    --secondary-3secondary-309: rgba(13, 3, 40, 1);
+  }

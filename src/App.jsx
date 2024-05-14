@@ -15,6 +15,7 @@ import FormLayout_PW from './pages/login/FormLayout_PW';
 import FormLayout_Reissue from './pages/login/FormLayout_Reissue';
 import UnNotifyDataHandling from './pages/backoffice/UnNotifyDataHandling'
 import KeyinSmartroPaymentData from './pages/backoffice/KeyinSmartroPaymentData'
+import AnimaTemplate from './pages/ppt-template/AnimaTemplate';
 
 /**
  * @BrowserRouter는 페이지를 새로고침하지 않고도 주소를 변경할 수 있도록 한다.
@@ -40,8 +41,9 @@ function App() {
           <Route path="/formlayout_reissue" element={<FormLayout_Reissue />} />
           <Route path="/resend-unnotify" element={<UnNotifyDataHandling/>} />
           <Route path="/keyin-smartro" element={<KeyinSmartroPaymentData/>} />
+          <Route path="/ppt1" element={<AnimaTemplate/>} />
 
-          
+
         </Routes>
       </BrowserRouter>
     </>
